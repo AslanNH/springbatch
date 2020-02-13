@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:batch="http://www.springframework.org/schema/batch"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">  <!-- 作业仓库 -->
+    <batch:job-repository id="jobRepository" data-source="dataSource"
+                    transaction-manager="transactionManager" isolation-level-for-create="SERIALIZABLE"
+                    table-prefix="BATCH_"/>
+<bean id="jobLauncher"
+      class="org.springframework.batch.core.launch.support.SimpleJobLauncher" >
+    <property name="jobRepository" ref="jobRepository"/>
+</bean>
+<bean id="creditBillProcessor" scope="step"
+      class="com.nh.CreditBillProcessor"></bean>
+    <bean id="creditBill"
+          class="com.nh.CreditBill" scope="prototype"></bean>
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 数据源 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://localhost:3306/springbatch</value>
+        </property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+</beans>
